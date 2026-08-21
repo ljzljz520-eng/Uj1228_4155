@@ -66,7 +66,7 @@ func (s *Service) Archive(id, actor string) (domain.Record, error) {
 	if err := s.recordAudit(r, "archive", actor, "batch archived"); err != nil {
 		return r, err
 	}
-	if err := s.archiveCallback(r); err != nil {
+	if err := s.runArchiveCallback(r); err != nil {
 		return r, err
 	}
 	return r, nil

@@ -19,6 +19,16 @@ type Service struct {
 func New(db *store.DB, c *clock.Clock) *Service          { return &Service{db: db, clock: c} }
 func (s *Service) SetArchiveCallback(cb ArchiveCallback) { s.archiveCallback = cb }
 func (s *Service) DB() *store.DB                         { return s.db }
+// runArchiveCallback invokes the archive callback, treating a missing callback as
+// a no-op so that archiving a batch never depends on external callback state being
+// configured. Each batch must archive independently and preserve its own confirmed
+// result, even when a second identical processing is triggered without a callback.
+func (s *Service) runArchiveCallback(r domain.Record) error {
+	if s.archiveCallback == nil {
+		return nil
+	}
+	return s.archiveCallback(r)
+}
 func (s *Service) nextID(prefix string) string {
 	return fmt.Sprintf("%s-%s", prefix, s.clock.Stamp(prefix))
 }
