@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "metrics": {
+    "production_loc": 2320,
+    "production_files": 37,
+    "production_packages": 8,
+    "test_files": 10,
+    "production_functions": 245,
+    "decision_points": 325
+  },
+  "persistence": {
+    "module": "go.etcd.io/bbolt",
+    "entities": ["Record", "AuditEvent", "Workflow", "Attachment"],
+    "reopen_test": "TestPersistenceSurvivesReopen"
+  },
+  "workflows": [
+    {
+      "steps": ["create record", "review fields and audit evidence", "confirm the independent business result", "archive the confirmed batch"],
+      "test": "TestWorkflowCreateReviewArchive"
+    },
+    {
+      "steps": ["search by batch code or title", "select the target and load history", "apply a collaborator revision", "publish the confirmed revision"],
+      "test": "TestWorkflowSearchUpdatePublish"
+    },
+    {
+      "steps": ["parse import data", "validate required fields and attachment metadata", "persist record workflow audit and attachment", "render an operator report"],
+      "test": "TestWorkflowImportReport"
+    }
+  ]
+}
